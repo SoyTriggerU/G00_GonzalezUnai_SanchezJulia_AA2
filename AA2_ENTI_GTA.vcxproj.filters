@@ -38,5 +38,8 @@
     <ClInclude Include="NPCs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Position2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
