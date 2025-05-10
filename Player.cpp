@@ -36,7 +36,7 @@ void HandleInput(Player& player, Map& map)
 		//map.Draw(player);
 	}
 
-	if (newPos.x > 0 && newPos.x < mapWidth && newPos.y > 0 && newPos.y < mapHeight)
+	if (newPos.x >= 0 && newPos.x < mapWidth && newPos.y >= 0 && newPos.y < mapHeight)
 	{
 		if (!map.isWall(newPos.x, newPos.y))
 		{

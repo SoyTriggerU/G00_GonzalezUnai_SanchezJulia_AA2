@@ -117,10 +117,7 @@ public:
 		file.close();
 	}
 
-	Map()
-	{
-
-	}
+	Map(){}
 
 	int GetTotalWidth() const
 	{
@@ -142,7 +139,7 @@ public:
 
 		// Reserving memory in heap
 		// We start by creating height because the number of height is equivalent to the number of rows
-		map = new CellType * [height];
+		map = new CellType* [height];
 		for (int i = 0; i < height; i++)
 		{
 			map[i] = new CellType[totalWidth];
@@ -154,7 +151,7 @@ public:
 			for (int x = 0; x < totalWidth; x++)
 			{
 				// For the left, right, top and bottom walls that limit of each map
-				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1 || x == width || x == 2 * width)
+				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1)
 				{
 					//if ((x != width && y != height / 2) || (x != 2 * width && y != height / 2))
 						map[y][x] = CellType::WALL;
