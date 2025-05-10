@@ -1,4 +1,7 @@
 #pragma once
+#include <fstream>
+#include <iostream>
+#include <string>
 
 class Map
 {
@@ -34,7 +37,13 @@ private:
 public:
 	void ReadConfigFile()
 	{
-
+		std::ifstream file("config.txt");
+		if (!file.is_open())
+		{
+			std::cout << "Error openeing the file, try again" << std::endl;
+			return;
+		}
+		std::cout << "File opened successfully!" << std::endl;
 	}
 
 	Map()
