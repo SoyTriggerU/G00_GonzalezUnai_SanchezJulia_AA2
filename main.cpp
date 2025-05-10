@@ -1,7 +1,6 @@
 #include "Map.h"
 #include "Player.h"
 #include "Position2D.h"
-#include "Windows.h"
 
 int main()
 {
@@ -14,7 +13,7 @@ int main()
 	map.Draw(player);
 	while (true)
 	{
-		Sleep(10);
 		HandleInput(player, map);
+		map.Draw(player);
 	}
 }

@@ -2,7 +2,9 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <Windows.h>
 #include "Player.h"
+#include "CursorControl.h"
 
 class Map
 {
@@ -165,14 +167,20 @@ public:
 
 	bool isWall(int x, int y)
 	{
-		if (x > 0 || x < GetTotalWidth() || y > 0 || y < height)
-			return false;
-		return map[y][x] != CellType::WALL;
+		if (x < 0 || x >= GetTotalWidth() || y < 0 || y >= height)
+			return true;
+		return map[y][x] == CellType::WALL;
+	}
+
+	void ClearScreen() {
+		COORD coord = { 0, 0 }; // Position top-left
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 	}
 
 	void Draw(const Player& player)
 	{
-		system("cls");
+		HideCursor();
+		ClearScreen();
 
 		int totalWidth = GetTotalWidth();
 
@@ -195,7 +203,7 @@ public:
 
 		for (int y = cameraTop; y < cameraBottom; y++)
 		{
-			for (int x = cameraLeft; x < cameraBottom; x++)
+			for (int x = cameraLeft; x < cameraRight; x++)
 			{
 
 				if (player.GetPos().x == x && player.GetPos().y == y)
@@ -236,7 +244,9 @@ public:
 					break;
 				}
 			}
-			std::cout << "\n";
+			std::cout << std::endl;
 		}
+		ShowCursor();
+		Sleep(150);
 	}
 };
