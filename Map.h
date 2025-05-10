@@ -35,8 +35,9 @@ private:
 	int tax_SanFierro_LasVenturas;
 	int moneyBeatingPedestrian_LasVenturas;
 
-	const int viewWidth = 20;
-	const int viewHeight = 10;
+	// Odd numbers so the player is in the middle
+	const int cameraWidth = 21;
+	const int cameraHeight = 11;
 
 public:
 	void ReadConfigFile()
@@ -175,10 +176,26 @@ public:
 
 		int totalWidth = GetTotalWidth();
 
+		// Defining camera view
+		int playerPosX = player.GetPos().x;
+		int playerPosY = player.GetPos().y;
 
-		for (int y = 0; y < height; y++)
+		// Left and top sides of the camera
+		int cameraLeft = playerPosX - (cameraWidth / 2); 
+		int cameraTop = playerPosY - (cameraHeight / 2);
+		if (cameraLeft <= 0) cameraLeft = 0;
+		if (cameraTop <= 0) cameraTop = 0;
+
+		// Right and bottom sides of the camera
+		int cameraRight =  cameraLeft + (cameraWidth - 1);
+		int cameraBottom =  cameraTop + (cameraHeight - 1);
+		if (cameraRight >= totalWidth) cameraRight = totalWidth - 1;
+		if (cameraBottom >= height) cameraRight = height - 1;
+
+
+		for (int y = cameraTop; y < cameraBottom; y++)
 		{
-			for (int x = 0; x < totalWidth; x++)
+			for (int x = cameraLeft; x < cameraBottom; x++)
 			{
 
 				if (player.GetPos().x == x && player.GetPos().y == y)
