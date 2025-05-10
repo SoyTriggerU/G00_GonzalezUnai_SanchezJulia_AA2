@@ -5,6 +5,7 @@
 int main()
 {
 	Map map;
+	std::vector<NPCs> npc;
 	map.ReadConfigFile();
 	map.InitMap();
 
@@ -14,6 +15,5 @@ int main()
 	while (true)
 	{
 		HandleInput(player, map);
-		map.Draw(player);
 	}
 }

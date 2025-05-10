@@ -2,9 +2,11 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <Windows.h>
 #include "Player.h"
 #include "CursorControl.h"
+#include "NPCs.h"
 
 class Map
 {
@@ -131,7 +133,6 @@ public:
 
 	void InitMap()
 	{
-		// We multiply the width by 3 because we need 3 maps
 		int totalWidth = GetTotalWidth();
 		// If we have no height and no width, we don't continue the method
 		if (height == 0 && totalWidth == 0)
@@ -151,11 +152,14 @@ public:
 			for (int x = 0; x < totalWidth; x++)
 			{
 				// For the left, right, top and bottom walls that limit of each map
-				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1)
-				{
-					//if ((x != width && y != height / 2) || (x != 2 * width && y != height / 2))
-						map[y][x] = CellType::WALL;
-				}
+				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1 || x == width || x == 2 * width)
+					map[y][x] = CellType::WALL;
+
+				// The bridges in the walls that separate the 3 maps
+				else if ((x == width && y == height / 2) || (x == 2 * width && y == height / 2))
+					map[y][x] = CellType::EMPTY;
+
+				// For the walls that separate the 3 maps 
 				else
 					map[y][x] = CellType::EMPTY;
 			}
@@ -174,10 +178,32 @@ public:
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 	}
 
+	void SetNPCsOnMap(std::vector<NPCs>& npc, int numNPCs)
+	{
+		int totalWidth = GetTotalWidth();
+		int counter = 0;
+			while (counter < numNPCs)
+			{
+				int posX = 1 + rand() % (totalWidth - 2);
+				int posY = 1 + rand() % (height - 2);
+
+				if (map[posY][posX] == CellType::EMPTY)
+				{
+					NPCs newNPC(posX, posY);
+					npc.push_back(newNPC);
+
+					map[posY][posX] = CellType::NPC;
+					counter++;
+				}
+			}
+	}
+
 	void Draw(const Player& player)
 	{
+		std::vector<NPCs> npc;
 		HideCursor();
 		ClearScreen();
+		SetNPCsOnMap(npc, 5); // Change values (it was only try that it works)
 
 		int totalWidth = GetTotalWidth();
 
@@ -198,9 +224,9 @@ public:
 		if (cameraBottom >= height) cameraRight = height - 1;
 
 
-		for (int y = cameraTop; y < cameraBottom; y++)
+		for (int y = 0; y < height; y++)
 		{
-			for (int x = cameraLeft; x < cameraRight; x++)
+			for (int x = 0; x < totalWidth; x++)
 			{
 
 				if (player.GetPos().x == x && player.GetPos().y == y)
@@ -236,6 +262,7 @@ public:
 					break;
 				case CellType::NPC:
 					std::cout << "P";
+					break;
 				default:
 					std::cout << ' ';
 					break;
