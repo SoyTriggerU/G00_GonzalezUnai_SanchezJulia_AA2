@@ -9,34 +9,39 @@ void HandleInput(Player& player, Map& map)
 	int mapHeight = map.GetHeight();
 
 	Position2D newPos = player.GetPos();
+	Direction newDir = player.GetDirection();
 
 	if (GetAsyncKeyState(VK_UP) & 0x08000)
 	{
-		player.SetDirection(Direction::UP);
+		newDir = Direction::UP;
 		newPos.y--;
 		map.Draw(player);
 	}
 	if (GetAsyncKeyState(VK_DOWN) & 0x08000)
 	{
-		player.SetDirection(Direction::DOWN);
+		newDir = Direction::DOWN;
 		newPos.y++;
 		map.Draw(player);
 	}
 	if (GetAsyncKeyState(VK_LEFT) & 0x08000)
 	{
-		player.SetDirection(Direction::LEFT);
+		newDir = Direction::LEFT;
 		newPos.x--;
 		map.Draw(player);
 	}
 	if (GetAsyncKeyState(VK_RIGHT) & 0x08000)
 	{
-		player.SetDirection(Direction::RIGHT);
+		newDir = Direction::RIGHT;
 		newPos.x++;
 		map.Draw(player);
 	}
 
-	if (newPos.x >= 0 && newPos.x <= mapWidth && newPos.y >= 0 && newPos.y <= mapHeight)
+	if (newPos.x > 0 && newPos.x < mapWidth && newPos.y > 0 && newPos.y < mapHeight)
 	{
-		player.SetPos(newPos.x, newPos.y);
+		if (!map.isWall(newPos.x, newPos.y))
+		{
+			player.SetDirection(newDir);
+			player.SetPos(newPos.x, newPos.y);
+		}
 	}
 }

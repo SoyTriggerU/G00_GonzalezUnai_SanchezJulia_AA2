@@ -11,10 +11,12 @@ private:
 	{
 		EMPTY,
 		WALL,
-		PEDESTRIAN,
+		NPC,
 		PLAYER,
 		MONEY
 	};
+
+	CellType** map;
 
 	const char PLAYER_UP = '^';
 	const char PLAYER_DOWN = 'v';
@@ -33,7 +35,8 @@ private:
 	int tax_SanFierro_LasVenturas;
 	int moneyBeatingPedestrian_LasVenturas;
 
-	CellType** map;
+	const int viewWidth = 20;
+	const int viewHeight = 10;
 
 public:
 	void ReadConfigFile()
@@ -135,14 +138,12 @@ public:
 			return;
 
 		// Reserving memory in heap
+		// We start by creating height because the number of height is equivalent to the number of rows
 		map = new CellType * [height];
 		for (int i = 0; i < height; i++)
 		{
 			map[i] = new CellType[totalWidth];
 		}
-
-		int bridge1 = 19;
-		int bridge2 = 50;
 
 		// Initializing in each position
 		for (int y = 0; y < height; y++)
@@ -150,22 +151,22 @@ public:
 			for (int x = 0; x < totalWidth; x++)
 			{
 				// For the left, right, top and bottom walls that limit of each map
-				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1)
-					map[y][x] = CellType::WALL;
-
-				// The bridges in the walls that separate the 3 maps
-				else if ((x == width && y == height / 2) || (x == 2 * width && y == height / 2))
-					map[y][x] = CellType::EMPTY;
-
-				// In between the walls that separate the 3 maps
-				else if (x == width || x == 2 * width)
-					map[y][x] = CellType::WALL;
-
-				// For the walls that separate the 3 maps 
+				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1 || x == width || x == 2 * width)
+				{
+					//if ((x != width && y != height / 2) || (x != 2 * width && y != height / 2))
+						map[y][x] = CellType::WALL;
+				}
 				else
 					map[y][x] = CellType::EMPTY;
 			}
 		}
+	}
+
+	bool isWall(int x, int y)
+	{
+		if (x > 0 || x < GetTotalWidth() || y > 0 || y < height)
+			return false;
+		return map[y][x] != CellType::WALL;
 	}
 
 	void Draw(const Player& player)
@@ -174,11 +175,11 @@ public:
 
 		int totalWidth = GetTotalWidth();
 
+
 		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < totalWidth; x++)
 			{
-				bool drawn = false;
 
 				if (player.GetPos().x == x && player.GetPos().y == y)
 				{
@@ -197,7 +198,7 @@ public:
 						std::cout << '>';
 						break;
 					}
-					drawn = true;
+					continue; // To skip impression of the original cell
 				}
 
 				switch (map[y][x])
@@ -211,6 +212,8 @@ public:
 				case CellType::MONEY:
 					std::cout << '$';
 					break;
+				case CellType::NPC:
+					std::cout << "P";
 				default:
 					std::cout << ' ';
 					break;
