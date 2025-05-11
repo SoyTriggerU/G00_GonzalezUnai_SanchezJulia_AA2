@@ -11,13 +11,12 @@ int main()
 	map.ReadConfigFile();
 	map.InitMap();
 	map.InitNPCs(player);
-	
 
 	map.Draw(player);
 	while (true)
 	{
 		HandleInput(player, map);
-		// map.MovementNPCs(player, npc);
 		map.KillingNPCs(player, npc);
+		map.MovementNPCs(player, npc);
 	}
 }

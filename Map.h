@@ -236,84 +236,81 @@ public:
 
 	void KillingNPCs(Player& player, std::vector<NPCs>& npcs)
 	{
-		int counter = 0;
-		for (; counter < npcs.size(); counter++)
-		{
-			NPCs& npc = npcs[counter];
+		int playerX = player.GetPos().x;
+		int playerY = player.GetPos().y;
 
-			int playerX = player.GetPos().x;
-			int playerY = player.GetPos().y;
+		for (int i = 0; i < npcs.size(); i++)
+		{
+			NPCs& npc = npcs[i];
+			
 			int npcX = npc.GetPos().x;
 			int npcY = npc.GetPos().y;
-			bool keyPressed = false;
 
 			if (playerX == npcX && playerY == npcY)
 			{
 				if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 				{
-					keyPressed = true;
 					std::cout << "Pressing space" << std::endl;
 					npc.SetIsDead(true);
-					npcs.erase(npcs.begin() + counter);
-					counter--;
+					npcs.erase(npcs.begin() + i);
+
 					map[npcY][npcX] = CellType::EMPTY;
+					i--;
 				}
 			}
 		}
 	}
 
-	//void MovementNPCs(Player& player, std::vector<NPCs>& npcs)
-	//{
-	//	int totalWidth = GetTotalWidth();
+	void MovementNPCs(Player& player, std::vector<NPCs>& npcs)
+	{
+		int totalWidth = GetTotalWidth();
+		int cellBefore = -1;
+		int cellAfter = 1;
 
-	//	for (NPCs& npc : npcs)
-	//	{
-	//		if (npc.IsDead() == false)
-	//		{
-	//			Zone npcZone = npc.GetZone();
-	//			int startX;
-	//			int endX;
+		for (NPCs& npc : npcs)
+		{
+			if (!npc.GetIsDead())
+			{				
+				Zone zone = npc.GetZone();
+				int startX = (zone == Zone::LOS_SANTOS) ? 0 : totalWidth / 3;
+				int endX = (zone == Zone::LOS_SANTOS) ? totalWidth / 3 : 2 * totalWidth / 3;
 
-	//			if (npcZone == Zone::LOS_SANTOS)
-	//			{
-	//				startX = 0;
-	//				endX = totalWidth / 3;
-	//			}
-	//			else if (npcZone == Zone::SAN_FIERRO)
-	//			{
-	//				startX = totalWidth / 3;
-	//				endX = 2 * (totalWidth / 3);
-	//			}
+				int npcX = npc.GetPos().x;
+				int npcY = npc.GetPos().y;
+				int playerX = player.GetPos().x;
+				int playerY = player.GetPos().y;
 
-	//			int npcX = npc.GetPos().x;
-	//			int npcY = npc.GetPos().y;
+				if ((npcX - playerX > 1 || playerX - npcX > 1) || (npcY - playerY > 1 || playerY - npcY > 1))
+				{
+					// Will try for 10 atemps to see if player is on the same range
+					for (int attempts = 0; attempts < 10; attempts++)
+					{
+						int newX = npcX;
+						int newY = npcY;
 
-	//			int playerX = player.GetPos().x;
-	//			int playerY = player.GetPos().y;
+						int dir = rand() % 4;
+						switch (dir)
+						{
+						case 0: newX--; break; // Moving left
+						case 1: newX++; break; // Moving right
+						case 2: newY--; break; // Moving up
+						case 3: newY++; break; // Moving down
+						}
 
-	//			if (map[npcY--][npcX] != map[playerY][playerX] ||
-	//				map[npcY++][npcX] != map[playerY][playerX] || map[npcY][npcX--] != map[playerY][playerX]
-	//				|| map[npcY][npcX++] != map[playerY][playerX])
-	//			{
-	//				int NPCdir = rand() % 2; // 0 = horizontal, 1 = vertical
-	//				int NPCmove = (rand() % 2 == 0) ? -1 : 1;
-
-	//				if (NPCdir == 0)
-	//				{
-	//					npcX += NPCmove;
-	//					if (npcX < startX || npcX >= endX) npcX -= NPCmove;
-	//				}
-	//				else
-	//				{
-	//					npcY += NPCmove;
-	//					if (npcY < 0 || npcY >= height) npcY -= NPCmove;
-	//				}
-	//				npc.SetPos(npcX, npcY);
-	//				map[npcY][npcX] = CellType::NPC;
-	//			}
-	//		}								
-	//	}
-	//}
+						bool inBounds = newX >= startX && newX < endX && newY >= 0 && newY < height;
+						if (inBounds && map[newY][newX] == CellType::EMPTY)
+						{
+							map[npcY][npcX] = CellType::EMPTY; // limpia casilla anterior
+							map[newY][newX] = CellType::NPC;   // marca la nueva
+							npc.SetPos(newX, newY);
+							break;
+						}
+					}
+				}
+			
+			}								
+		}
+	}
 
 	void Draw(const Player& player)
 	{
