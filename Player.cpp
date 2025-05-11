@@ -11,37 +11,44 @@ void HandleInput(Player& player, Map& map)
 	Position2D newPos = player.GetPos();
 	Direction newDir = player.GetDirection();
 
-	if (GetAsyncKeyState(VK_UP) & 0x08000)
+	bool keyPressed = false;
+
+	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
 		newDir = Direction::UP;
 		newPos.y--;
-		map.Draw(player);
+		keyPressed = true;
 	}
-	if (GetAsyncKeyState(VK_DOWN) & 0x08000)
+	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 	{
 		newDir = Direction::DOWN;
 		newPos.y++;
-		map.Draw(player);
+		keyPressed = true;
 	}
-	if (GetAsyncKeyState(VK_LEFT) & 0x08000)
+	else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
 		newDir = Direction::LEFT;
 		newPos.x--;
-		map.Draw(player);
+		keyPressed = true;
 	}
-	if (GetAsyncKeyState(VK_RIGHT) & 0x08000)
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 	{
 		newDir = Direction::RIGHT;
 		newPos.x++;
-		map.Draw(player);
+		keyPressed = true;
 	}
 
-	if (newPos.x > 0 && newPos.x < mapWidth && newPos.y > 0 && newPos.y < mapHeight)
+	if (keyPressed)
 	{
-		if (!map.isWall(newPos.x, newPos.y))
+		player.SetDirection(newDir);
+
+		if (newPos.x > 0 && newPos.x < mapWidth &&
+			newPos.y > 0 && newPos.y < mapHeight &&
+			!map.isWall(newPos.x, newPos.y))
 		{
-			player.SetDirection(newDir);
 			player.SetPos(newPos.x, newPos.y);
 		}
+
+		map.Draw(player);
 	}
 }

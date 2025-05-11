@@ -1,17 +1,22 @@
 #pragma once
 #include "Position2D.h"
+#include "Zone.h"
+
 class NPCs
 {
 private:
 	Position2D pos;
 	bool isDead;
 	bool isMoving;
+	Zone zone;
+
 public:
-	NPCs(int spawnX, int spawnY)
+	NPCs(int spawnX, int spawnY, Zone spawnZone)
 	{
 		pos.x = spawnX;
 		pos.y = spawnY;
 		isDead = false;
+		zone = spawnZone;
 	}
 
 	void SetPos(int x, int y)
@@ -25,5 +30,9 @@ public:
 		return pos;
 	}
 
+	Zone GetZone() const
+	{
+		return zone;
+	}
 };
 

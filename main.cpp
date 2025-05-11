@@ -1,15 +1,17 @@
 #include "Map.h"
 #include "Player.h"
 #include "Position2D.h"
+#include "NPCs.h"
 
 int main()
 {
 	Map map;
-	std::vector<NPCs> npc;
+	Player player(5, 5);
 	map.ReadConfigFile();
 	map.InitMap();
+	map.InitNPCs(player);
 
-	Player player(5, 5);
+	
 
 	map.Draw(player);
 	while (true)

@@ -1,5 +1,6 @@
 #pragma once
 #include "Position2D.h"
+#include "Zone.h"
 
 class Map;
 
@@ -17,14 +18,16 @@ private:
 	Position2D pos;
 	int currentMoney;
 	Direction direction;
+	Zone currentZone;
 
 public:
-	Player(int startX, int startY)
+	Player(int startX, int startY, Zone zone = Zone::LOS_SANTOS)
 	{
 		pos.x = startX;
 		pos.y = startY;
 		currentMoney = 0;
 		direction = Direction::DOWN;
+		currentZone = zone;
 	}
 	void SetPos(int x, int y)
 	{
@@ -43,6 +46,16 @@ public:
 	Position2D GetPos() const
 	{
 		return pos;
+	}
+
+	Zone GetCurrentZone() const  
+	{
+		return currentZone;
+	}
+
+	void SetCurrentZone(Zone zone)
+	{
+		currentZone = zone;
 	}
 };
 
