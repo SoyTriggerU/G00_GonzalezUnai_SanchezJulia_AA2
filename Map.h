@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 #include <Windows.h>
 #include <algorithm>
 #include "Player.h"
@@ -60,69 +61,56 @@ public:
 			return;
 		}
 
-		const int bufferSize = 256;
-		char buffer[bufferSize];
-		char value[32];
-		int valueIndex = 0;
+		std::string line;
 		int valueCount = 0;
 
-		while (!file.eof())
-		{
-			file.read(buffer, bufferSize);
-			int length = file.gcount();
+		// Read first line (Map dimensions)
+		std::getline(file, line);
+		std::stringstream ss(line);
+		std::string value;
 
-			for (int i = 0; i < length; ++i)
-			{
-				char ch = buffer[i];
+		// Read first value (width)
+		std::getline(ss, value, ';');
+		width = std::stoi(value);
 
-				if (ch == ';' || ch == '\n')
-				{
-					value[valueIndex] = '\0'; // End current value
+		// Read second value (height)
+		std::getline(ss, value, ';');
+		height = std::stoi(value);
 
-					int num = std::atoi(value);
+		// Read second line (Los Santos)
+		std::getline(file, line);
+		ss.clear();
+		ss.str(line);
 
-					switch (valueCount)
-					{
-					case 0:
-						height = num;
-						break;
-					case 1:
-						width = num;
-						break;
-					case 2:
-						numNPCs_LosSantos = num;
-						break;
-					case 3:
-						tax_LosSantos_SanFierro = num;
-						break;
-					case 4:
-						moneyBeatingPedestrian_LosSantos = num;
-						break;
-					case 5:
-						numNPCs_SanFierro = num;
-						break;
-					case 6:
-						tax_SanFierro_LasVenturas = num;
-						break;
-					case 7:
-						moneyBeatingPedestrian_LasVenturas = num;
-						break;
-					default:
-						break;
-					}
+		// Read number of NPCs in Los Santos
+		std::getline(ss, value, ';');
+		numNPCs_LosSantos = std::stoi(value);
 
-					valueCount++;
-					valueIndex = 0;
-				}
-				else
-				{
-					if (valueIndex < 31)
-					{
-						value[valueIndex++] = ch;
-					}
-				}
-			}
-		}
+		// Read amount of money to go to San Fierro
+		std::getline(ss, value, ';');
+		tax_LosSantos_SanFierro = std::stoi(value);
+
+		// Read how much money can an NPC drop in Los Santos
+		std::getline(ss, value, ';');
+		moneyBeatingPedestrian_LosSantos = std::stoi(value);
+
+		// Read third line (San Fierro)
+		std::getline(file, line);
+		ss.clear();
+		ss.str(line);
+
+		// Read number of NPCs in San Fierro
+		std::getline(ss, value, ';');
+		numNPCs_SanFierro = std::stoi(value);
+
+		// Read amount of money to go to Las Venturas
+		std::getline(ss, value, ';');
+		tax_SanFierro_LasVenturas = std::stoi(value);
+
+		// Read how much money can an NPC drop in San Fierro
+		std::getline(ss, value, ';');
+		moneyBeatingPedestrian_LasVenturas = std::stoi(value);
+
 		file.close();
 	}
 
