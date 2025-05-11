@@ -48,7 +48,6 @@ void HandleInput(Player& player, Map& map)
 		{
 			player.SetPos(newPos.x, newPos.y);
 		}
-
 		map.Draw(player);
 	}
 }

@@ -17,6 +17,7 @@ public:
 		pos.y = spawnY;
 		isDead = false;
 		zone = spawnZone;
+		isDead = false;
 	}
 
 	void SetPos(int x, int y)
@@ -35,14 +36,14 @@ public:
 		return zone;
 	}
 
-	void SetIsDead(bool boolean)
-	{
-		isDead = boolean;
-	}
-
 	bool GetIsDead()
 	{
 		return isDead;
+	}
+
+	void Die()
+	{
+		this->isDead = true;
 	}
 };
 

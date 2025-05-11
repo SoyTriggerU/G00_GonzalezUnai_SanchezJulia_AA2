@@ -5,6 +5,7 @@
 
 int main()
 {
+	srand(time(NULL));
 	Map map;
 	Player player(5, 5);
 	std::vector<NPCs> npc;
@@ -18,5 +19,6 @@ int main()
 		HandleInput(player, map);
 		map.KillingNPCs(player, npc);
 		map.MovementNPCs(player, npc);
+		Sleep(150);
 	}
 }

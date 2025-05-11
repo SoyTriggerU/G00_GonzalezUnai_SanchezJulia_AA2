@@ -1,6 +1,8 @@
 #pragma once
 #include "Position2D.h"
 #include "Zone.h"
+#include "NPCs.h"
+#include <vector>
 
 class Map;
 

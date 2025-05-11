@@ -6,6 +6,7 @@
 #include <sstream>
 #include <Windows.h>
 #include <algorithm>
+#include <cmath>
 #include "Player.h"
 #include "CursorControl.h"
 #include "NPCs.h"
@@ -190,8 +191,19 @@ public:
 	}
 
 	void ClearScreen() {
+		system("cls");
 		COORD coord = { 0, 0 }; // Position top-left
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+	}
+
+	void RemoveNPC(int x, int y)
+	{
+		map[y][x] = CellType::EMPTY;
+	}
+
+	void PlaceNPC(int x, int y)
+	{
+		map[y][x] = CellType::NPC;
 	}
 
 	void InitNPCs(Player& player) 
@@ -236,26 +248,16 @@ public:
 
 	void KillingNPCs(Player& player, std::vector<NPCs>& npcs)
 	{
-		int playerX = player.GetPos().x;
-		int playerY = player.GetPos().y;
-
 		for (int i = 0; i < npcs.size(); i++)
 		{
-			NPCs& npc = npcs[i];
-			
-			int npcX = npc.GetPos().x;
-			int npcY = npc.GetPos().y;
-
-			if (playerX == npcX && playerY == npcY)
+			if (abs(player.GetPos().x - npcs[i].GetPos().x) <= 1 || abs(player.GetPos().y - npcs[i].GetPos().y) <= 1)
 			{
 				if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 				{
-					std::cout << "Pressing space" << std::endl;
-					npc.SetIsDead(true);
+					npcs[i].Die();
 					npcs.erase(npcs.begin() + i);
 
-					map[npcY][npcX] = CellType::EMPTY;
-					i--;
+					map[npcs[i].GetPos().y][npcs[i].GetPos().x] = CellType::EMPTY;
 				}
 			}
 		}
@@ -264,47 +266,38 @@ public:
 	void MovementNPCs(Player& player, std::vector<NPCs>& npcs)
 	{
 		int totalWidth = GetTotalWidth();
-		int cellBefore = -1;
-		int cellAfter = 1;
 
 		for (NPCs& npc : npcs)
 		{
 			if (!npc.GetIsDead())
 			{				
 				Zone zone = npc.GetZone();
-				int startX = (zone == Zone::LOS_SANTOS) ? 0 : totalWidth / 3;
-				int endX = (zone == Zone::LOS_SANTOS) ? totalWidth / 3 : 2 * totalWidth / 3;
 
 				int npcX = npc.GetPos().x;
 				int npcY = npc.GetPos().y;
 				int playerX = player.GetPos().x;
 				int playerY = player.GetPos().y;
 
-				if ((npcX - playerX > 1 || playerX - npcX > 1) || (npcY - playerY > 1 || playerY - npcY > 1))
+				if (abs(playerX - npcX) > 1 || abs(playerY - npcY) > 1)
 				{
-					// Will try for 10 atemps to see if player is on the same range
-					for (int attempts = 0; attempts < 10; attempts++)
+					int newX = npcX;
+					int newY = npcY;
+
+					int dir = rand() % 4;
+					switch (dir)
 					{
-						int newX = npcX;
-						int newY = npcY;
+					case 0: newX--; break; // Moving left
+					case 1: newX++; break; // Moving right
+					case 2: newY--; break; // Moving up
+					case 3: newY++; break; // Moving down
+					default: break;
+					}
 
-						int dir = rand() % 4;
-						switch (dir)
-						{
-						case 0: newX--; break; // Moving left
-						case 1: newX++; break; // Moving right
-						case 2: newY--; break; // Moving up
-						case 3: newY++; break; // Moving down
-						}
-
-						bool inBounds = newX >= startX && newX < endX && newY >= 0 && newY < height;
-						if (inBounds && map[newY][newX] == CellType::EMPTY)
-						{
-							map[npcY][npcX] = CellType::EMPTY; // limpia casilla anterior
-							map[newY][newX] = CellType::NPC;   // marca la nueva
-							npc.SetPos(newX, newY);
-							break;
-						}
+					if ((newX >= 0 && newX < totalWidth && newY >= 0 && newY < height) && map[newY][newX] == CellType::EMPTY)
+					{
+						RemoveNPC(npcX, npcY);
+						PlaceNPC(newX, newY);
+						npc.SetPos(newX, newY);
 					}
 				}
 			
@@ -343,9 +336,9 @@ public:
 		// Get current player's zone
 		Zone currentZone = player.GetCurrentZone();
 
-		for (int y = 0; y < height; y++)
+		for (int y = cameraTop; y <= cameraBottom; y++)
 		{
-			for (int x = 0; x < totalWidth; x++)
+			for (int x = cameraLeft; x <= cameraRight; x++)
 			{
 
 				if (player.GetPos().x == x && player.GetPos().y == y)
