@@ -67,23 +67,23 @@ public:
 		int valueIndex = 0;
 		int valueCount = 0;
 
-		// Leer línea por línea del archivo
-		while (file.getline(buffer, bufferSize)) // Usamos getline para leer una línea completa
+		// Read line by line
+		while (file.getline(buffer, bufferSize)) // We use getline to read a complete line
 		{
 			int i = 0;
 
-			// Recorremos la línea
-			while (buffer[i] != '\0') // Hasta el final de la línea
+			// We go through the line
+			while (buffer[i] != '\0') // All the way to the end
 			{
 				char ch = buffer[i];
 
-				if (ch == ';' || ch == '\n' || ch == '\0') // Si encontramos un ';' o un salto de línea
+				if (ch == ';' || ch == '\n' || ch == '\0') // If we find a ; or a jump line
 				{
-					value[valueIndex] = '\0'; // Finaliza el valor
+					value[valueIndex] = '\0'; // End value
 
-					int num = std::atoi(value); // Convierte el valor a entero
+					int num = std::atoi(value); // Converts the value to an integer
 
-					// Asignamos el valor al campo adecuado según valueCount
+					// We assign the value to the appropriate field according to valueCount
 					switch (valueCount)
 					{
 					case 0:
@@ -114,19 +114,19 @@ public:
 						break;
 					}
 
-					valueCount++; // Aumentamos el índice de valor
-					valueIndex = 0; // Reseteamos el índice para el siguiente valor
+					valueCount++; 
+					valueIndex = 0; 
 				}
 				else
 				{
-					// Agregamos el carácter al valor actual si no es un delimitador
+					// We add the character to the current value if it is not a delimiter
 					if (valueIndex < 31)
 					{
 						value[valueIndex++] = ch;
 					}
 				}
 
-				i++; // Avanzamos al siguiente carácter
+				i++;
 			}
 		}
 

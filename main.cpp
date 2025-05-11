@@ -13,9 +13,9 @@ int main()
 
 	
 
-	//map.Draw(player);
+	map.Draw(player);
 	while (true)
 	{
-		//HandleInput(player, map);
+		HandleInput(player, map);
 	}
 }
