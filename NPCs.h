@@ -35,7 +35,12 @@ public:
 		return zone;
 	}
 
-	bool IsDead()
+	void SetIsDead(bool boolean)
+	{
+		isDead = boolean;
+	}
+
+	bool GetIsDead()
 	{
 		return isDead;
 	}

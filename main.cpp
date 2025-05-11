@@ -18,5 +18,6 @@ int main()
 	{
 		HandleInput(player, map);
 		// map.MovementNPCs(player, npc);
+		map.KillingNPCs(player, npc);
 	}
 }

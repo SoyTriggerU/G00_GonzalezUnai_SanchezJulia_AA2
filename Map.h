@@ -165,17 +165,17 @@ public:
 		{
 			for (int x = 0; x < totalWidth; x++)
 			{
-				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1 || x == width || x == 2 * width)
+				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1)
 				{
-					// For the bridges in the walls
+					map[y][x] = CellType::WALL;
+				} 
+				else if (x == totalWidth / 3 || x == 2 * totalWidth / 3)
+				{
 					if (y == height / 2)
 						map[y][x] = CellType::EMPTY;
-
-					// For the walls
 					else
 						map[y][x] = CellType::WALL;
-				} 
-				// For everything else
+				}
 				else
 					map[y][x] = CellType::EMPTY;
 			}
@@ -194,30 +194,33 @@ public:
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 	}
 
-	void InitNPCs(Player& player) {
-		Zone currentZone = player.GetCurrentZone();  // Obtener la zona del jugador
-
-		// Colocar NPCs dependiendo de la zona del jugador
-		switch (currentZone)
-		{
-        case Zone::LOS_SANTOS:
-            SetNPCsOnMap(npcs, numNPCs_LosSantos, Zone::LOS_SANTOS);  // Crear NPCs para Los Santos
-            break;
-        case Zone::SAN_FIERRO:
-            SetNPCsOnMap(npcs, numNPCs_SanFierro, Zone::SAN_FIERRO);  // Crear NPCs para San Fierro
-            break;
-        default:
-            break;
-		}
+	void InitNPCs(Player& player) 
+	{
+		SetNPCsOnMap(npcs, numNPCs_LosSantos, Zone::LOS_SANTOS);  // Crear NPCs para Los Santos
+        SetNPCsOnMap(npcs, numNPCs_SanFierro, Zone::SAN_FIERRO);  // Crear NPCs para San Fierro
 	}
 
 	void SetNPCsOnMap(std::vector<NPCs>& npc, int numNPCs, Zone zone)
 	{
 		int totalWidth = GetTotalWidth();
+		int startX;
+		int endX;
+
+		if (zone == Zone::LOS_SANTOS)
+		{
+			startX = 0;
+			endX = totalWidth / 3;
+		}
+		else if (zone == Zone::SAN_FIERRO)
+		{
+			startX = totalWidth / 3;
+			endX = (2 * totalWidth) / 3;
+		}
+
 		int counter = 0;
 		while (counter < numNPCs)
 		{
-			int posX = 1 + rand() % (totalWidth - 2);
+			int posX = startX + rand() % (endX - startX);
 			int posY = 1 + rand() % (height - 2);
 
 			if (map[posY][posX] == CellType::EMPTY)
@@ -233,7 +236,30 @@ public:
 
 	void KillingNPCs(Player& player, std::vector<NPCs>& npcs)
 	{
+		int counter = 0;
+		for (; counter < npcs.size(); counter++)
+		{
+			NPCs& npc = npcs[counter];
 
+			int playerX = player.GetPos().x;
+			int playerY = player.GetPos().y;
+			int npcX = npc.GetPos().x;
+			int npcY = npc.GetPos().y;
+			bool keyPressed = false;
+
+			if (playerX == npcX && playerY == npcY)
+			{
+				if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+				{
+					keyPressed = true;
+					std::cout << "Pressing space" << std::endl;
+					npc.SetIsDead(true);
+					npcs.erase(npcs.begin() + counter);
+					counter--;
+					map[npcY][npcX] = CellType::EMPTY;
+				}
+			}
+		}
 	}
 
 	//void MovementNPCs(Player& player, std::vector<NPCs>& npcs)
@@ -320,9 +346,9 @@ public:
 		// Get current player's zone
 		Zone currentZone = player.GetCurrentZone();
 
-		for (int y = cameraTop; y <= cameraBottom; y++)
+		for (int y = 0; y < height; y++)
 		{
-			for (int x = cameraLeft; x <= cameraRight; x++)
+			for (int x = 0; x < totalWidth; x++)
 			{
 
 				if (player.GetPos().x == x && player.GetPos().y == y)
