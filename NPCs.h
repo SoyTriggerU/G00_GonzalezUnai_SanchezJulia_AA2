@@ -34,5 +34,10 @@ public:
 	{
 		return zone;
 	}
+
+	bool IsDead()
+	{
+		return isDead;
+	}
 };
 

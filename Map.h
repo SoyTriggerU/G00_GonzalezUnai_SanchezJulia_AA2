@@ -165,15 +165,17 @@ public:
 		{
 			for (int x = 0; x < totalWidth; x++)
 			{
-				// For the left, right, top and bottom walls that limit of each map
 				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1 || x == width || x == 2 * width)
-					map[y][x] = CellType::WALL;
+				{
+					// For the bridges in the walls
+					if (y == height / 2)
+						map[y][x] = CellType::EMPTY;
 
-				// The bridges in the walls that separate the 3 maps
-				else if ((x == width && y == height / 2) || (x == 2 * width && y == height / 2))
-					map[y][x] = CellType::EMPTY;
-
-				// For the walls that separate the 3 maps 
+					// For the walls
+					else
+						map[y][x] = CellType::WALL;
+				} 
+				// For everything else
 				else
 					map[y][x] = CellType::EMPTY;
 			}
@@ -193,11 +195,11 @@ public:
 	}
 
 	void InitNPCs(Player& player) {
-    Zone currentZone = player.GetCurrentZone();  // Obtener la zona del jugador
+		Zone currentZone = player.GetCurrentZone();  // Obtener la zona del jugador
 
-    // Colocar NPCs dependiendo de la zona del jugador
-    switch (currentZone)
-    {
+		// Colocar NPCs dependiendo de la zona del jugador
+		switch (currentZone)
+		{
         case Zone::LOS_SANTOS:
             SetNPCsOnMap(npcs, numNPCs_LosSantos, Zone::LOS_SANTOS);  // Crear NPCs para Los Santos
             break;
@@ -206,8 +208,8 @@ public:
             break;
         default:
             break;
-    }
-}
+		}
+	}
 
 	void SetNPCsOnMap(std::vector<NPCs>& npc, int numNPCs, Zone zone)
 	{
@@ -228,6 +230,64 @@ public:
 			}
 		}
 	}
+
+	void KillingNPCs(Player& player, std::vector<NPCs>& npcs)
+	{
+
+	}
+
+	//void MovementNPCs(Player& player, std::vector<NPCs>& npcs)
+	//{
+	//	int totalWidth = GetTotalWidth();
+
+	//	for (NPCs& npc : npcs)
+	//	{
+	//		if (npc.IsDead() == false)
+	//		{
+	//			Zone npcZone = npc.GetZone();
+	//			int startX;
+	//			int endX;
+
+	//			if (npcZone == Zone::LOS_SANTOS)
+	//			{
+	//				startX = 0;
+	//				endX = totalWidth / 3;
+	//			}
+	//			else if (npcZone == Zone::SAN_FIERRO)
+	//			{
+	//				startX = totalWidth / 3;
+	//				endX = 2 * (totalWidth / 3);
+	//			}
+
+	//			int npcX = npc.GetPos().x;
+	//			int npcY = npc.GetPos().y;
+
+	//			int playerX = player.GetPos().x;
+	//			int playerY = player.GetPos().y;
+
+	//			if (map[npcY--][npcX] != map[playerY][playerX] ||
+	//				map[npcY++][npcX] != map[playerY][playerX] || map[npcY][npcX--] != map[playerY][playerX]
+	//				|| map[npcY][npcX++] != map[playerY][playerX])
+	//			{
+	//				int NPCdir = rand() % 2; // 0 = horizontal, 1 = vertical
+	//				int NPCmove = (rand() % 2 == 0) ? -1 : 1;
+
+	//				if (NPCdir == 0)
+	//				{
+	//					npcX += NPCmove;
+	//					if (npcX < startX || npcX >= endX) npcX -= NPCmove;
+	//				}
+	//				else
+	//				{
+	//					npcY += NPCmove;
+	//					if (npcY < 0 || npcY >= height) npcY -= NPCmove;
+	//				}
+	//				npc.SetPos(npcX, npcY);
+	//				map[npcY][npcX] = CellType::NPC;
+	//			}
+	//		}								
+	//	}
+	//}
 
 	void Draw(const Player& player)
 	{
