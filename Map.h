@@ -14,7 +14,7 @@
 
 class Map
 {
-private:
+public:
 	enum class CellType
 	{
 		EMPTY,
@@ -41,10 +41,10 @@ private:
 	int height;
 	int numNPCs_LosSantos;
 	int tax_LosSantos_SanFierro;
-	int moneyBeatingPedestrian_LosSantos;
+	int moneyBeatingNPCs_LosSantos;
 	int numNPCs_SanFierro;
 	int tax_SanFierro_LasVenturas;
-	int moneyBeatingPedestrian_LasVenturas;
+	int moneyBeatingNPCs_SanFierro;
 
 	// Odd numbers so the player is in the middle
 	const int cameraWidth = widthCenter;
@@ -52,7 +52,6 @@ private:
 
 	std::vector<NPCs> npcs;
 
-public:
 	void ReadConfigFile()
 	{
 		std::ifstream file("config.txt", std::ios::in);
@@ -100,7 +99,7 @@ public:
 						tax_LosSantos_SanFierro = num;
 						break;
 					case 4:
-						moneyBeatingPedestrian_LosSantos = num;
+						moneyBeatingNPCs_LosSantos = num;
 						break;
 					case 5:
 						numNPCs_SanFierro = num;
@@ -109,7 +108,7 @@ public:
 						tax_SanFierro_LasVenturas = num;
 						break;
 					case 7:
-						moneyBeatingPedestrian_LasVenturas = num;
+						moneyBeatingNPCs_SanFierro = num;
 						break;
 					default:
 						break;
@@ -169,7 +168,7 @@ public:
 				if (x == 0 || x == totalWidth - 1 || y == 0 || y == height - 1)
 				{
 					map[y][x] = CellType::WALL;
-				} 
+				}
 				else if (x == totalWidth / 3 || x == 2 * totalWidth / 3)
 				{
 					if (y == height / 2)
@@ -183,6 +182,16 @@ public:
 		}
 	}
 
+	CellType getCell(int x, int y) const 
+	{
+		return map[y][x];
+	}
+
+	void setCell(int x, int y, CellType cellType) 
+	{
+		map[y][x] = cellType;
+	}
+
 	bool isWall(int x, int y) const
 	{
 		if (x < 0 || x >= GetTotalWidth() || y < 0 || y >= height)
@@ -190,8 +199,8 @@ public:
 		return map[y][x] == CellType::WALL;
 	}
 
-	void ClearScreen() {
-		system("cls");
+	void ClearScreen() 
+	{
 		COORD coord = { 0, 0 }; // Position top-left
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 	}
@@ -208,8 +217,8 @@ public:
 
 	void InitNPCs(Player& player) 
 	{
-		SetNPCsOnMap(npcs, numNPCs_LosSantos, Zone::LOS_SANTOS);  // Crear NPCs para Los Santos
-        SetNPCsOnMap(npcs, numNPCs_SanFierro, Zone::SAN_FIERRO);  // Crear NPCs para San Fierro
+		SetNPCsOnMap(npcs, numNPCs_LosSantos, Zone::LOS_SANTOS);  
+        SetNPCsOnMap(npcs, numNPCs_SanFierro, Zone::SAN_FIERRO);
 	}
 
 	void SetNPCsOnMap(std::vector<NPCs>& npc, int numNPCs, Zone zone)
@@ -246,7 +255,7 @@ public:
 		}
 	}
 
-	void KillingNPCs(Player& player, std::vector<NPCs>& npcs)
+	void KillingNPCs(Player& player)
 	{
 		for (int i = 0; i < npcs.size(); i++)
 		{
@@ -254,16 +263,19 @@ public:
 			{
 				if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 				{
-					npcs[i].Die();
-					npcs.erase(npcs.begin() + i);
+					int npcX = npcs[i].GetPos().x;
+					int npcY = npcs[i].GetPos().y;
+					Zone zone = npcs[i].GetZone();
 
-					map[npcs[i].GetPos().y][npcs[i].GetPos().x] = CellType::EMPTY;
+					npcs[i].Die();
+					map[npcY][npcX] = CellType::MONEY;
+					npcs.erase(npcs.begin() + i);
 				}
 			}
 		}
 	}
 
-	void MovementNPCs(Player& player, std::vector<NPCs>& npcs)
+	void MovementNPCs(Player& player)
 	{
 		int totalWidth = GetTotalWidth();
 
@@ -278,7 +290,7 @@ public:
 				int playerX = player.GetPos().x;
 				int playerY = player.GetPos().y;
 
-				if (abs(playerX - npcX) > 1 || abs(playerY - npcY) > 1)
+				if (abs(playerX - npcX) > 1 && abs(playerY - npcY) > 1)
 				{
 					int newX = npcX;
 					int newY = npcY;
@@ -382,8 +394,9 @@ public:
 			}
 			std::cout << std::endl;
 		}
+		std::cout << "\nCJ's money $" << player.GetMoney() << std::endl;
+
 		ShowCursor();
-		Sleep(150);
 	}
 
 	~Map() {

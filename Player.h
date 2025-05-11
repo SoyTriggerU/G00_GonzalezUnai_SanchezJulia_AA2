@@ -59,7 +59,14 @@ public:
 	{
 		currentZone = zone;
 	}
+
+	void AddMoney(int amount) {
+		currentMoney += amount;
+	}
+
+	int GetMoney() const {
+		return currentMoney;
+	}
 };
 
 void HandleInput(Player& player, Map& map);
-

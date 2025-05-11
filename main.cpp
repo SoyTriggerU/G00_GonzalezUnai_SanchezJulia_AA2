@@ -1,3 +1,4 @@
+#include <ctime>
 #include "Map.h"
 #include "Player.h"
 #include "Position2D.h"
@@ -8,7 +9,6 @@ int main()
 	srand(time(NULL));
 	Map map;
 	Player player(5, 5);
-	std::vector<NPCs> npc;
 	map.ReadConfigFile();
 	map.InitMap();
 	map.InitNPCs(player);
@@ -17,8 +17,8 @@ int main()
 	while (true)
 	{
 		HandleInput(player, map);
-		map.KillingNPCs(player, npc);
-		map.MovementNPCs(player, npc);
+		map.KillingNPCs(player);
+		map.MovementNPCs(player);
 		Sleep(150);
 	}
 }
