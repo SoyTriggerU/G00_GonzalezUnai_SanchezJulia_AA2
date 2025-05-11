@@ -61,55 +61,74 @@ public:
 			return;
 		}
 
-		std::string line;
+		const int bufferSize = 256;
+		char buffer[bufferSize];
+		char value[32];
+		int valueIndex = 0;
 		int valueCount = 0;
 
-		// Read first line (Map dimensions)
-		std::getline(file, line);
-		std::stringstream ss(line);
-		std::string value;
+		// Leer línea por línea del archivo
+		while (file.getline(buffer, bufferSize)) // Usamos getline para leer una línea completa
+		{
+			int i = 0;
 
-		// Read first value (width)
-		std::getline(ss, value, ';');
-		width = std::stoi(value);
+			// Recorremos la línea
+			while (buffer[i] != '\0') // Hasta el final de la línea
+			{
+				char ch = buffer[i];
 
-		// Read second value (height)
-		std::getline(ss, value, ';');
-		height = std::stoi(value);
+				if (ch == ';' || ch == '\n' || ch == '\0') // Si encontramos un ';' o un salto de línea
+				{
+					value[valueIndex] = '\0'; // Finaliza el valor
 
-		// Read second line (Los Santos)
-		std::getline(file, line);
-		ss.clear();
-		ss.str(line);
+					int num = std::atoi(value); // Convierte el valor a entero
 
-		// Read number of NPCs in Los Santos
-		std::getline(ss, value, ';');
-		numNPCs_LosSantos = std::stoi(value);
+					// Asignamos el valor al campo adecuado según valueCount
+					switch (valueCount)
+					{
+					case 0:
+						height = num;
+						break;
+					case 1:
+						width = num;
+						break;
+					case 2:
+						numNPCs_LosSantos = num;
+						break;
+					case 3:
+						tax_LosSantos_SanFierro = num;
+						break;
+					case 4:
+						moneyBeatingPedestrian_LosSantos = num;
+						break;
+					case 5:
+						numNPCs_SanFierro = num;
+						break;
+					case 6:
+						tax_SanFierro_LasVenturas = num;
+						break;
+					case 7:
+						moneyBeatingPedestrian_LasVenturas = num;
+						break;
+					default:
+						break;
+					}
 
-		// Read amount of money to go to San Fierro
-		std::getline(ss, value, ';');
-		tax_LosSantos_SanFierro = std::stoi(value);
+					valueCount++; // Aumentamos el índice de valor
+					valueIndex = 0; // Reseteamos el índice para el siguiente valor
+				}
+				else
+				{
+					// Agregamos el carácter al valor actual si no es un delimitador
+					if (valueIndex < 31)
+					{
+						value[valueIndex++] = ch;
+					}
+				}
 
-		// Read how much money can an NPC drop in Los Santos
-		std::getline(ss, value, ';');
-		moneyBeatingPedestrian_LosSantos = std::stoi(value);
-
-		// Read third line (San Fierro)
-		std::getline(file, line);
-		ss.clear();
-		ss.str(line);
-
-		// Read number of NPCs in San Fierro
-		std::getline(ss, value, ';');
-		numNPCs_SanFierro = std::stoi(value);
-
-		// Read amount of money to go to Las Venturas
-		std::getline(ss, value, ';');
-		tax_SanFierro_LasVenturas = std::stoi(value);
-
-		// Read how much money can an NPC drop in San Fierro
-		std::getline(ss, value, ';');
-		moneyBeatingPedestrian_LasVenturas = std::stoi(value);
+				i++; // Avanzamos al siguiente carácter
+			}
+		}
 
 		file.close();
 	}
