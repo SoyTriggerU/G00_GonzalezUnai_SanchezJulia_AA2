@@ -17,7 +17,6 @@ public:
 		pos.y = spawnY;
 		isDead = false;
 		zone = spawnZone;
-		isDead = false;
 	}
 
 	void SetPos(int x, int y)

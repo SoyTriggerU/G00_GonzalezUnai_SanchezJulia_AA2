@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include "Player.h"
 #include "CursorControl.h"
 #include "NPCs.h"
@@ -21,7 +22,8 @@ public:
 		WALL,
 		NPC,
 		PLAYER,
-		MONEY
+		MONEY,
+		TOLL
 	};
 
 	CellType** map;
@@ -49,7 +51,8 @@ public:
 	// Odd numbers so the player is in the middle
 	const int cameraWidth = widthCenter;
 	const int cameraHeight = heightCenter;
-
+	
+	int randomY;
 	std::vector<NPCs> npcs;
 
 	void ReadConfigFile()
@@ -160,6 +163,12 @@ public:
 			map[i] = new CellType[totalWidth];
 		}
 
+		if (height > 0)
+		{
+			randomY = rand() % height;
+		}
+		else {}
+
 		// Initializing in each position
 		for (int y = 0; y < height; y++)
 		{
@@ -171,8 +180,8 @@ public:
 				}
 				else if (x == totalWidth / 3 || x == 2 * totalWidth / 3)
 				{
-					if (y == height / 2)
-						map[y][x] = CellType::EMPTY;
+					if (y == randomY)
+						map[y][x] = CellType::TOLL;
 					else
 						map[y][x] = CellType::WALL;
 				}
@@ -259,7 +268,7 @@ public:
 	{
 		for (int i = 0; i < npcs.size(); i++)
 		{
-			if (abs(player.GetPos().x - npcs[i].GetPos().x) <= 1 || abs(player.GetPos().y - npcs[i].GetPos().y) <= 1)
+			if (abs(player.GetPos().x - npcs[i].GetPos().x) <= 1 && abs(player.GetPos().y - npcs[i].GetPos().y) <= 1)
 			{
 				if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 				{
@@ -290,7 +299,7 @@ public:
 				int playerX = player.GetPos().x;
 				int playerY = player.GetPos().y;
 
-				if (abs(playerX - npcX) > 1 && abs(playerY - npcY) > 1)
+				if (abs(playerX - npcX) > 1 || abs(playerY - npcY) > 1)
 				{
 					int newX = npcX;
 					int newY = npcY;
@@ -387,6 +396,9 @@ public:
 				case CellType::NPC:
 					std::cout << "P";
 					break;
+				case CellType::TOLL:
+					std::cout << "T";
+					break;
 				default:
 					std::cout << ' ';
 					break;
@@ -394,7 +406,7 @@ public:
 			}
 			std::cout << std::endl;
 		}
-		std::cout << "\nCJ's money $" << player.GetMoney() << std::endl;
+		std::cout << "\nCJ's money: $" << player.GetMoney() << std::endl;
 
 		ShowCursor();
 	}
