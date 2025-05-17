@@ -319,7 +319,47 @@ public:
 					npcs[i].Die();
 					map[npcY][npcX] = CellType::MONEY;
 					npcs.erase(npcs.begin() + i);
+
+					RepositionNPCInZone(zone);
+
+					break;
 				}
+			}
+		}
+	}
+
+	void RepositionNPCInZone(Zone zone)
+	{
+		int totalWidth = GetTotalWidth();
+		int startX, endX;
+
+		if (zone == Zone::LOS_SANTOS)
+		{
+			startX = 0;
+			endX = totalWidth / 3;
+		}
+		else if (zone == Zone::SAN_FIERRO)
+		{
+			startX = totalWidth / 3;
+			endX = 2 * totalWidth / 3;
+		}
+		else
+		{
+			return; // Si se necesita, puedes agregar más zonas aquí
+		}
+
+		// Buscar una posición vacía en esa zona
+		for (int attempts = 0; attempts < 100; ++attempts) // evitar loop infinito
+		{
+			int x = startX + rand() % (endX - startX);
+			int y = 1 + rand() % (height - 2); // evitar paredes
+
+			if (map[y][x] == CellType::EMPTY)
+			{
+				NPCs newNPC(x, y, zone);
+				npcs.push_back(newNPC);
+				map[y][x] = CellType::NPC;
+				break;
 			}
 		}
 	}
