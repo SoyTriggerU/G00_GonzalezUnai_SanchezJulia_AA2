@@ -41,12 +41,22 @@ public:
 
 	int width;
 	int height;
-	int numNPCs_LosSantos;
+	int CJsHealth;
+	int CJsPower;
 	int tax_LosSantos_SanFierro;
-	int moneyBeatingNPCs_LosSantos;
-	int numNPCs_SanFierro;
 	int tax_SanFierro_LasVenturas;
+	int numNPCs_LosSantos;
+	int moneyBeatingNPCs_LosSantos;
+	int healthNPCs_LosSantos;
+	int powerNPCs_LosSantos;
+	int numNPCs_SanFierro;
 	int moneyBeatingNPCs_SanFierro;
+	int healthNPCs_SanFierro;
+	int powerNPCs_SanFierro;
+	int numNPCs_LasVenturas;
+	int moneyBeatingNPCs_LasVenturas;
+	int healthNPCs_LasVenturas;
+	int powerNPCs_LasVenturas;
 
 	// Odd numbers so the player is in the middle
 	const int cameraWidth = widthCenter;
@@ -96,22 +106,52 @@ public:
 						width = num;
 						break;
 					case 2:
-						numNPCs_LosSantos = num;
+						CJsHealth = num;
 						break;
 					case 3:
-						tax_LosSantos_SanFierro = num;
+						CJsPower = num;
 						break;
 					case 4:
-						moneyBeatingNPCs_LosSantos = num;
+						tax_LosSantos_SanFierro = num;
 						break;
 					case 5:
-						numNPCs_SanFierro = num;
-						break;
-					case 6:
 						tax_SanFierro_LasVenturas = num;
 						break;
+					case 6:
+						numNPCs_LosSantos = num;
+						break;
 					case 7:
+						moneyBeatingNPCs_LosSantos = num;
+						break;
+					case 8:
+						healthNPCs_LosSantos = num;
+						break;
+					case 9:
+						powerNPCs_LosSantos = num;
+						break;
+					case 10:
+						numNPCs_SanFierro = num;
+						break;
+					case 11:
 						moneyBeatingNPCs_SanFierro = num;
+						break;
+					case 12:
+						healthNPCs_SanFierro = num;
+						break;
+					case 13:
+						powerNPCs_SanFierro = num;
+						break;
+					case 14:
+						numNPCs_LasVenturas = num;
+						break;
+					case 15:
+						moneyBeatingNPCs_LasVenturas = num;
+						break;
+					case 16:
+						healthNPCs_LasVenturas = num;
+						break;
+					case 17:
+						powerNPCs_LasVenturas = num;
 						break;
 					default:
 						break;
