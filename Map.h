@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include "Player.h"
 #include "CursorControl.h"
-#include "NPCs.h"
+#include "Walker.h"
 
 
 class Map

@@ -45,4 +45,3 @@ public:
 		this->isDead = true;
 	}
 };
-

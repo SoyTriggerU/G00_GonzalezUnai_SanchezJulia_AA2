@@ -2,7 +2,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "Position2D.h"
-#include "NPCs.h"
+#include "Walker.h"
 
 int main()
 {

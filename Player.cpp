@@ -49,7 +49,7 @@ void HandleInput(Player& player, Map& map)
 		{
 			player.SetPos(newPos.x, newPos.y);
 
-			// Si hay dinero en la celda, el jugador lo recoge
+			// If there's money, CJ picks it up
 			if (map.getCell(newPos.x, newPos.y) == Map::CellType::MONEY)
 			{
 				Zone zone = player.GetCurrentZone();
@@ -67,7 +67,8 @@ void HandleInput(Player& player, Map& map)
 					break;
 				}
 
-				if (maxAmount > 0) {
+				if (maxAmount > 0) 
+				{
 					int randomAmount = 1 + rand() % maxAmount;
 					player.AddMoney(randomAmount);
 				}
@@ -75,7 +76,22 @@ void HandleInput(Player& player, Map& map)
 					player.AddMoney(1);
 				}
 
-				map.setCell(newPos.x, newPos.y, Map::CellType::EMPTY); // Eliminar el dinero de la celda
+				map.setCell(newPos.x, newPos.y, Map::CellType::EMPTY); // Delete money
+			}
+
+			// Toll detection
+			if (map.getCell(newPos.x, newPos.y) == Map::CellType::TOLL)
+			{
+				int tollFee = 0;
+				if (player.GetCurrentZone() == Zone::LOS_SANTOS && player.GetMoney() >= map.tax_LosSantos_SanFierro)
+				{
+					player.SubstractMoney(map.tax_LosSantos_SanFierro);
+					map.setCell(newPos.x, newPos.y, Map::CellType::EMPTY); // Delete toll
+				}
+				else
+				{
+					//GAME OVER
+				}
 			}
 		}
 		map.Draw(player);

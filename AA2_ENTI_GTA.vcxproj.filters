@@ -24,7 +24,7 @@
     <ClCompile Include="Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NPCs.cpp">
+    <ClCompile Include="Walker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CursorControl.cpp">
@@ -38,7 +38,7 @@
     <ClInclude Include="Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NPCs.h">
+    <ClInclude Include="Walker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Position2D.h">

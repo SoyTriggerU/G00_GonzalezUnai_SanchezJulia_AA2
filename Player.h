@@ -1,7 +1,7 @@
 #pragma once
 #include "Position2D.h"
 #include "Zone.h"
-#include "NPCs.h"
+#include "Walker.h"
 #include <vector>
 
 class Map;
@@ -60,11 +60,18 @@ public:
 		currentZone = zone;
 	}
 
-	void AddMoney(int amount) {
+	void AddMoney(int amount) 
+	{
 		currentMoney += amount;
 	}
 
-	int GetMoney() const {
+	void SubstractMoney(int amount)
+	{
+		currentMoney -= amount;
+	}
+
+	int GetMoney() const 
+	{
 		return currentMoney;
 	}
 };

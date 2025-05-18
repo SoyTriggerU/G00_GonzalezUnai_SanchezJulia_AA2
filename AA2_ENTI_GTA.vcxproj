@@ -130,13 +130,13 @@
     <ClCompile Include="CursorControl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
-    <ClCompile Include="NPCs.cpp" />
+    <ClCompile Include="Walker.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CursorControl.h" />
     <ClInclude Include="Map.h" />
-    <ClInclude Include="NPCs.h" />
+    <ClInclude Include="Walker.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Position2D.h" />
     <ClInclude Include="Zone.h" />
