@@ -2,6 +2,12 @@
 #include "Position2D.h"
 #include "Zone.h"
 
+enum class Behaviour
+{
+	Agresivo,
+	Neutral
+};
+
 class NPCs
 {
 private:
@@ -9,6 +15,7 @@ private:
 	bool isDead;
 	bool isMoving;
 	Zone zone;
+	Behaviour behaviour;
 
 public:
 	NPCs(int spawnX, int spawnY, Zone spawnZone)
@@ -43,5 +50,10 @@ public:
 	void Die()
 	{
 		this->isDead = true;
+	}
+
+	Behaviour GetBehaviour()
+	{
+		return behaviour;
 	}
 };
