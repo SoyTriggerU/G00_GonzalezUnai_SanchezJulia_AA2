@@ -127,14 +127,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BigSmoke.cpp" />
+    <ClCompile Include="Car.cpp" />
     <ClCompile Include="CursorControl.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Walker.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BigSmoke.h" />
+    <ClInclude Include="Car.h" />
     <ClInclude Include="CursorControl.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Walker.h" />
     <ClInclude Include="Player.h" />

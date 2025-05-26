@@ -16,44 +16,24 @@ private:
 	bool isMoving;
 	Zone zone;
 	Behaviour behaviour;
+	int health;
+	int power;
 
 public:
-	NPCs(int spawnX, int spawnY, Zone spawnZone)
-	{
-		pos.x = spawnX;
-		pos.y = spawnY;
-		isDead = false;
-		zone = spawnZone;
-	}
+	NPCs(int spawnX, int spawnY, Zone spawnZone);
 
-	void SetPos(int x, int y)
-	{
-		pos.x = x;
-		pos.y = y;
-	}
+	void SetPos(int x, int y);
+	Position2D GetPos() const;
+	Zone GetZone() const;
+	bool GetIsDead() const;
+	void Die();
+	Behaviour GetBehaviour() const;
 
-	Position2D GetPos()
-	{
-		return pos;
-	}
-
-	Zone GetZone() const
-	{
-		return zone;
-	}
-
-	bool GetIsDead()
-	{
-		return isDead;
-	}
-
-	void Die()
-	{
-		this->isDead = true;
-	}
-
-	Behaviour GetBehaviour()
-	{
-		return behaviour;
-	}
+	// Combat system
+	int GetHealth() const;
+	int GetPower() const;
+	void TakeDamage(int damage);
+	bool IsAggressive() const;
+	void AttackPlayer(class Player& player);
+	void MoveTowardsPlayer(const Position2D& playerPos, class Map& map);
 };
