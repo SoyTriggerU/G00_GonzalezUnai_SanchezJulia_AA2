@@ -39,14 +39,14 @@ void Game::ShowInitScreen()
 {
     Map::ClearScreen();
     std::cout << "\n\n\n";
-    std::cout << "  ╔══════════════════════════════════════╗\n";
-    std::cout << "  ║                                      ║\n";
-    std::cout << "  ║        GTA SAN ANDREAS MINI          ║\n";
-    std::cout << "  ║                                      ║\n";
-    std::cout << "  ║           Welcome to CJ's            ║\n";
-    std::cout << "  ║              Adventure               ║\n";
-    std::cout << "  ║                                      ║\n";
-    std::cout << "  ╚══════════════════════════════════════╝\n";
+    std::cout << "  ╔═════════════════════════════════════╗\n";
+    std::cout << "  ║                                     ║\n";
+    std::cout << "  ║        GTA SAN ANDREAS MINI         ║\n";
+    std::cout << "  ║                                     ║\n";
+    std::cout << "  ║           Welcome to CJ's           ║\n";
+    std::cout << "  ║              Adventure              ║\n";
+    std::cout << "  ║                                     ║\n";
+    std::cout << "  ╚═════════════════════════════════════╝\n";
 
     if (HasTimeElapsed(3))
     {
@@ -59,30 +59,30 @@ void Game::ShowMainMenu()
 {
     Map::ClearScreen();
     std::cout << "\n\n";
-    std::cout << "  ╔══════════════════════════════════════╗\n";
-    std::cout << "  ║            MAIN MENU                 ║\n";
-    std::cout << "  ║                                      ║\n";
+    std::cout << "  ╔═════════════════════════════════════╗\n";
+    std::cout << "  ║            MAIN MENU                ║\n";
+    std::cout << "  ║                                     ║\n";
 
     // Display menu options with selection indicator
     if (selectedMenuOption == 0) {
-        std::cout << "  ║  > Play Game                     <   ║\n";
-        std::cout << "  ║    Exit                              ║\n";
+        std::cout << "  ║  > Play Game                     <  ║\n";
+        std::cout << "  ║    Exit                             ║\n";
     }
     else {
-        std::cout << "  ║    Play Game                         ║\n";
-        std::cout << "  ║  > Exit                          <   ║\n";
+        std::cout << "  ║    Play Game                        ║\n";
+        std::cout << "  ║  > Exit                          <  ║\n";
     }
 
-    std::cout << "  ║                                      ║\n";
-    std::cout << "  ║  Use UP/DOWN arrow keys to navigate  ║\n";
-    std::cout << "  ║  SPACE to select option              ║\n";
-    std::cout << "  ║                                      ║\n";
-    std::cout << "  ║  In Game Controls:                   ║\n";
-    std::cout << "  ║  Arrow keys to move                  ║\n";
-    std::cout << "  ║  SPACE to attack/interact            ║\n";
-    std::cout << "  ║  E to enter/exit car                 ║\n";
-    std::cout << "  ║                                      ║\n";
-    std::cout << "  ╚══════════════════════════════════════╝\n";
+    std::cout << "  ║                                     ║\n";
+    std::cout << "  ║  Use UP/DOWN arrow keys to navigate ║\n";
+    std::cout << "  ║  SPACE to select option             ║\n";
+    std::cout << "  ║                                     ║\n";
+    std::cout << "  ║  In Game Controls:                  ║\n";
+    std::cout << "  ║  Arrow keys to move                 ║\n";
+    std::cout << "  ║  SPACE to attack/interact           ║\n";
+    std::cout << "  ║  E to enter/exit car                ║\n";
+    std::cout << "  ║                                     ║\n";
+    std::cout << "  ╚═════════════════════════════════════╝\n";
 
     HandleMenuInput();
     Sleep(100);
