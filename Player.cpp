@@ -134,11 +134,11 @@ void HandleInput(Player& player, Map& map)
     Position2D newPos = player.GetPos();
     Direction newDir = player.GetDirection();
     bool keyPressed = false;
+    static bool enterKeyPressed = false;
 
     // Handle car entry/exit
     if (GetAsyncKeyState('E') & 0x8000)
     {
-        static bool enterKeyPressed = false;
         if (!enterKeyPressed)
         {
             enterKeyPressed = true;
@@ -160,7 +160,7 @@ void HandleInput(Player& player, Map& map)
                 {
                     currentCar->SetOccupied(false);
                     currentCar->SetActive(false); // Car becomes inactive after use
-                    map.setCell(player.GetPos().x, player.GetPos().y, Map::CellType::EMPTY);
+                    map.setCell(player.GetPos().x, player.GetPos().y, Map::CellType::CAR);
                 }
 
                 player.ExitCar();
@@ -198,7 +198,6 @@ void HandleInput(Player& player, Map& map)
     }
     else
     {
-        static bool enterKeyPressed = false;
         enterKeyPressed = false;
     }
 
