@@ -506,7 +506,7 @@ void Map::RunOverNPC(int x, int y, Player& player)
             // Remove NPC (run over)
             Zone zone = npcs[i].GetZone();
             npcs.erase(npcs.begin() + i);
-            map[y][x] = CellType::EMPTY;
+            map[y][x] = CellType::MONEY;
 
             // Spawn new NPC in same zone
             RepositionNPCInZone(zone);
