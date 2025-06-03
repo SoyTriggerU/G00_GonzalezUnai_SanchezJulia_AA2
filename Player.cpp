@@ -135,9 +135,6 @@ void HandleInput(Player& player, Map& map)
     Direction newDir = player.GetDirection();
     bool keyPressed = false;
     static bool enterKeyPressed = false;
-
-    if (!player.IsDead())
-    {
         // Handle car entry/exit
         if (GetAsyncKeyState('E') & 0x8000)
         {
@@ -320,9 +317,4 @@ void HandleInput(Player& player, Map& map)
             }
             map.Draw(player);
         }
-    }
-    else
-    {
-        map.GameOver(player);
-    }
 }

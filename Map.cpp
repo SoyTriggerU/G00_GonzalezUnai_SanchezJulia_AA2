@@ -286,8 +286,6 @@ void Map::SetNPCsOnMap(std::vector<NPCs>& npc, int numNPCs, Zone zone)
 
 void Map::KillingNPCs(Player& player)
 {
-    if (!player.IsDead())
-    {
         for (int i = 0; i < npcs.size(); i++)
         {
             if (IsPlayerAdjacentToNPC(player, npcs[i]))
@@ -316,11 +314,6 @@ void Map::KillingNPCs(Player& player)
                 }
             }
         }
-    }
-    else
-    {
-        GameOver(player);
-    }
 }
 
 void Map::RepositionNPCInZone(Zone zone)
