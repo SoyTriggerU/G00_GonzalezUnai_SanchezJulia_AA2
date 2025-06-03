@@ -571,8 +571,6 @@ bool Map::AttackPlayer(Player& player)
 // Combat system
 void Map::HandleCombat(Player& player)
 {
-    if (!player.IsDead())
-    {
         if (GetAsyncKeyState(VK_SPACE) & 0x8000)
         {
             // Check if attacking Big Smoke
@@ -604,11 +602,11 @@ void Map::HandleCombat(Player& player)
                 attackCooldown--;
             }
         }
-    }
-    else
-    {
-        GameOver(player);
-    }
+
+        if (bigSmoke && bigSmoke->IsDead())
+        {
+            GameOver(player);
+        }
 }
 
 bool Map::IsPlayerAdjacentToNPC(const Player& player, const NPCs& npc)
