@@ -506,8 +506,6 @@ bool Map::CanPlayerEnterCar(const Player& player)
 
 void Map::RunOverNPC(int x, int y, Player& player)
 {
-    if (!player.IsDead())
-    {
         for (int i = 0; i < npcs.size(); i++)
         {
             if (npcs[i].GetPos().x == x && npcs[i].GetPos().y == y)
@@ -522,11 +520,6 @@ void Map::RunOverNPC(int x, int y, Player& player)
                 break;
             }
         }
-    }
-    else
-    {
-        GameOver(player);
-    }
 }
 
 // Big Smoke methods
@@ -602,11 +595,6 @@ void Map::HandleCombat(Player& player)
                 attackCooldown--;
             }
         }
-
-        if (bigSmoke && bigSmoke->IsDead())
-        {
-            GameOver(player);
-        }
 }
 
 bool Map::IsPlayerAdjacentToNPC(const Player& player, const NPCs& npc)
@@ -654,22 +642,10 @@ bool Map::HandleTollCrossing(Player& player)
         else
         {
             // Player arrested - Game Over
-            GameOver(player);
             return false;
         }
     }
     return true;
-}
-
-void Map::GameOver(const Player& player) const
-{
-    HideCursor();
-    ClearScreen();
-
-    std::cout << "GAME OVER!" << std::endl;
-    std::cout << "Thank you for playing" << std::endl;
-
-    // The text and player stats will appear for 5 seconds, then game will close
 }
 
 void Map::Draw(const Player& player)
