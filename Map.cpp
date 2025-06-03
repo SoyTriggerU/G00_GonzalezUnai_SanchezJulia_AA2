@@ -286,33 +286,40 @@ void Map::SetNPCsOnMap(std::vector<NPCs>& npc, int numNPCs, Zone zone)
 
 void Map::KillingNPCs(Player& player)
 {
-    for (int i = 0; i < npcs.size(); i++)
+    if (!player.IsDead())
     {
-        if (IsPlayerAdjacentToNPC(player, npcs[i]))
+        for (int i = 0; i < npcs.size(); i++)
         {
-            if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+            if (IsPlayerAdjacentToNPC(player, npcs[i]))
             {
-                int npcX = npcs[i].GetPos().x;
-                int npcY = npcs[i].GetPos().y;
-                Zone zone = npcs[i].GetZone();
-
-                // Player attacks NPC
-                npcs[i].TakeDamage(player.GetPower());
-
-                if (npcs[i].GetIsDead())
+                if (GetAsyncKeyState(VK_SPACE) & 0x8000)
                 {
-                    map[npcY][npcX] = CellType::MONEY;
-                    npcs.erase(npcs.begin() + i);
-                    RepositionNPCInZone(zone);
+                    int npcX = npcs[i].GetPos().x;
+                    int npcY = npcs[i].GetPos().y;
+                    Zone zone = npcs[i].GetZone();
+
+                    // Player attacks NPC
+                    npcs[i].TakeDamage(player.GetPower());
+
+                    if (npcs[i].GetIsDead())
+                    {
+                        map[npcY][npcX] = CellType::MONEY;
+                        npcs.erase(npcs.begin() + i);
+                        RepositionNPCInZone(zone);
+                    }
+                    else if (npcs[i].IsAggressive())
+                    {
+                        // NPC fights back
+                        npcs[i].AttackPlayer(player);
+                    }
+                    break;
                 }
-                else if (npcs[i].IsAggressive())
-                {
-                    // NPC fights back
-                    npcs[i].AttackPlayer(player);
-                }
-                break;
             }
         }
+    }
+    else
+    {
+        GameOver(player);
     }
 }
 
@@ -499,19 +506,26 @@ bool Map::CanPlayerEnterCar(const Player& player)
 
 void Map::RunOverNPC(int x, int y, Player& player)
 {
-    for (int i = 0; i < npcs.size(); i++)
+    if (!player.IsDead())
     {
-        if (npcs[i].GetPos().x == x && npcs[i].GetPos().y == y)
+        for (int i = 0; i < npcs.size(); i++)
         {
-            // Remove NPC (run over)
-            Zone zone = npcs[i].GetZone();
-            npcs.erase(npcs.begin() + i);
-            map[y][x] = CellType::MONEY;
+            if (npcs[i].GetPos().x == x && npcs[i].GetPos().y == y)
+            {
+                // Remove NPC (run over)
+                Zone zone = npcs[i].GetZone();
+                npcs.erase(npcs.begin() + i);
+                map[y][x] = CellType::MONEY;
 
-            // Spawn new NPC in same zone
-            RepositionNPCInZone(zone);
-            break;
+                // Spawn new NPC in same zone
+                RepositionNPCInZone(zone);
+                break;
+            }
         }
+    }
+    else
+    {
+        GameOver(player);
     }
 }
 
@@ -557,36 +571,43 @@ bool Map::AttackPlayer(Player& player)
 // Combat system
 void Map::HandleCombat(Player& player)
 {
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+    if (!player.IsDead())
     {
-        // Check if attacking Big Smoke
-        if (bigSmoke && !bigSmoke->IsDead() && IsPlayerAdjacentToBigSmoke(player))
+        if (GetAsyncKeyState(VK_SPACE) & 0x8000)
         {
-            if (!player.IsInCar()) // Can't attack from car
+            // Check if attacking Big Smoke
+            if (bigSmoke && !bigSmoke->IsDead() && IsPlayerAdjacentToBigSmoke(player))
             {
-                bigSmoke->TakeDamage(player.GetPower());
-                if (!bigSmoke->IsDead())
+                if (!player.IsInCar()) // Can't attack from car
                 {
-                    // Big Smoke attacks back
-                    player.TakeDamage(bigSmoke->GetPower());
+                    bigSmoke->TakeDamage(player.GetPower());
+                    if (!bigSmoke->IsDead())
+                    {
+                        // Big Smoke attacks back
+                        player.TakeDamage(bigSmoke->GetPower());
+                    }
                 }
             }
         }
-    }
 
-    // Big Smoke attacks player if adjacent
-    if (bigSmoke && !bigSmoke->IsDead() && IsPlayerAdjacentToBigSmoke(player))
+        // Big Smoke attacks player if adjacent
+        if (bigSmoke && !bigSmoke->IsDead() && IsPlayerAdjacentToBigSmoke(player))
+        {
+            static int attackCooldown = 0;
+            if (attackCooldown <= 0)
+            {
+                player.TakeDamage(bigSmoke->GetPower());
+                attackCooldown = 10; // Attack every 10 frames
+            }
+            else
+            {
+                attackCooldown--;
+            }
+        }
+    }
+    else
     {
-        static int attackCooldown = 0;
-        if (attackCooldown <= 0)
-        {
-            player.TakeDamage(bigSmoke->GetPower());
-            attackCooldown = 10; // Attack every 10 frames
-        }
-        else
-        {
-            attackCooldown--;
-        }
+        GameOver(player);
     }
 }
 
@@ -635,10 +656,22 @@ bool Map::HandleTollCrossing(Player& player)
         else
         {
             // Player arrested - Game Over
+            GameOver(player);
             return false;
         }
     }
     return true;
+}
+
+void Map::GameOver(const Player& player) const
+{
+    HideCursor();
+    ClearScreen();
+
+    std::cout << "GAME OVER!" << std::endl;
+    std::cout << "Thank you for playing" << std::endl;
+
+    // The text and player stats will appear for 5 seconds, then game will close
 }
 
 void Map::Draw(const Player& player)
@@ -720,6 +753,10 @@ void Map::Draw(const Player& player)
     if (player.IsInCar())
     {
         std::cout << " | IN CAR";
+    }
+    else if (!player.IsInCar())
+    {
+        std::cout << " | NOT IN CAR";
     }
 
     std::cout << "\n\nControls: Arrow keys to move, SPACE to attack, E to enter/exit car\n";

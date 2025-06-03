@@ -136,58 +136,61 @@ void HandleInput(Player& player, Map& map)
     bool keyPressed = false;
     static bool enterKeyPressed = false;
 
-    // Handle car entry/exit
-    if (GetAsyncKeyState('E') & 0x8000)
+    if (!player.IsDead())
     {
-        if (!enterKeyPressed)
+        // Handle car entry/exit
+        if (GetAsyncKeyState('E') & 0x8000)
         {
-            enterKeyPressed = true;
-
-            if (player.IsInCar())
+            if (!enterKeyPressed)
             {
-                // Exit car
-                Car* currentCar = nullptr;
-                for (Car& car : map.cars)
+                enterKeyPressed = true;
+
+                if (player.IsInCar())
                 {
-                    if (car.GetPos().x == player.GetPos().x && car.GetPos().y == player.GetPos().y)
+                    // Exit car
+                    Car* currentCar = nullptr;
+                    for (Car& car : map.cars)
                     {
-                        currentCar = &car;
-                        break;
-                    }
-                }
-
-                if (currentCar)
-                {
-                    currentCar->SetOccupied(false);
-                    currentCar->SetActive(false); // Car becomes inactive after use
-                    map.setCell(player.GetPos().x, player.GetPos().y, Map::CellType::CAR);
-                }
-
-                player.ExitCar();
-            }
-            else if (map.CanPlayerEnterCar(player))
-            {
-                // Enter car
-                Position2D playerPos = player.GetPos();
-
-                for (int dx = -1; dx <= 1; dx++)
-                {
-                    for (int dy = -1; dy <= 1; dy++)
-                    {
-                        int x = playerPos.x + dx;
-                        int y = playerPos.y + dy;
-
-                        if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight)
+                        if (car.GetPos().x == player.GetPos().x && car.GetPos().y == player.GetPos().y)
                         {
-                            if (map.getCell(x, y) == Map::CellType::CAR)
+                            currentCar = &car;
+                            break;
+                        }
+                    }
+
+                    if (currentCar)
+                    {
+                        currentCar->SetOccupied(false);
+                        currentCar->SetActive(false); // Car becomes inactive after use
+                        map.setCell(player.GetPos().x, player.GetPos().y, Map::CellType::CAR);
+                    }
+
+                    player.ExitCar();
+                }
+                else if (map.CanPlayerEnterCar(player))
+                {
+                    // Enter car
+                    Position2D playerPos = player.GetPos();
+
+                    for (int dx = -1; dx <= 1; dx++)
+                    {
+                        for (int dy = -1; dy <= 1; dy++)
+                        {
+                            int x = playerPos.x + dx;
+                            int y = playerPos.y + dy;
+
+                            if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight)
                             {
-                                Car* car = map.GetCarAt(x, y);
-                                if (car && !car->IsOccupied())
+                                if (map.getCell(x, y) == Map::CellType::CAR)
                                 {
-                                    car->SetOccupied(true);
-                                    map.RemoveCar(x, y);
-                                    player.SetPos(x, y);
-                                    player.EnterCar(0);
+                                    Car* car = map.GetCarAt(x, y);
+                                    if (car && !car->IsOccupied())
+                                    {
+                                        car->SetOccupied(true);
+                                        map.RemoveCar(x, y);
+                                        player.SetPos(x, y);
+                                        player.EnterCar(0);
+                                    }
                                 }
                             }
                         }
@@ -195,128 +198,131 @@ void HandleInput(Player& player, Map& map)
                 }
             }
         }
-    }
-    else
-    {
-        enterKeyPressed = false;
-    }
-
-    // Movement input
-    if (GetAsyncKeyState(VK_UP) & 0x8000)
-    {
-        newDir = Direction::UP;
-        newPos.y--;
-        keyPressed = true;
-    }
-    else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-    {
-        newDir = Direction::DOWN;
-        newPos.y++;
-        keyPressed = true;
-    }
-    else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-    {
-        newDir = Direction::LEFT;
-        newPos.x--;
-        keyPressed = true;
-    }
-    else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-    {
-        newDir = Direction::RIGHT;
-        newPos.x++;
-        keyPressed = true;
-    }
-
-    if (keyPressed)
-    {
-        player.SetDirection(newDir);
-
-        if (newPos.x > 0 && newPos.x < mapWidth &&
-            newPos.y > 0 && newPos.y < mapHeight &&
-            !map.isWall(newPos.x, newPos.y))
+        else
         {
-            bool canMove = true;
+            enterKeyPressed = false;
+        }
 
-            // Check for Big Smoke collision (can't run over with car)
-            if (map.getCell(newPos.x, newPos.y) == Map::CellType::BIG_SMOKE && player.IsInCar())
-            {
-                canMove = false; // Can't run over Big Smoke
-            }
-            // Check for NPC collision when in car
-            else if (map.getCell(newPos.x, newPos.y) == Map::CellType::NPC && player.IsInCar())
-            {
-                map.RunOverNPC(newPos.x, newPos.y, player);
-                canMove = true;
-            }
-            // Check for car collision when not in car
-            else if (map.getCell(newPos.x, newPos.y) == Map::CellType::CAR && !player.IsInCar())
-            {
-                canMove = false; // Can't walk through cars
-            }
+        // Movement input
+        if (GetAsyncKeyState(VK_UP) & 0x8000)
+        {
+            newDir = Direction::UP;
+            newPos.y--;
+            keyPressed = true;
+        }
+        else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+        {
+            newDir = Direction::DOWN;
+            newPos.y++;
+            keyPressed = true;
+        }
+        else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+        {
+            newDir = Direction::LEFT;
+            newPos.x--;
+            keyPressed = true;
+        }
+        else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+        {
+            newDir = Direction::RIGHT;
+            newPos.x++;
+            keyPressed = true;
+        }
 
-            if (canMove)
-            {
-                player.SetPos(newPos.x, newPos.y);
+        if (keyPressed)
+        {
+            player.SetDirection(newDir);
 
-                // Update zone based on position
-                int totalWidth = map.GetTotalWidth();
-                if (newPos.x < totalWidth / 3)
+            if (newPos.x > 0 && newPos.x < mapWidth &&
+                newPos.y > 0 && newPos.y < mapHeight &&
+                !map.isWall(newPos.x, newPos.y))
+            {
+                bool canMove = true;
+
+                // Check for Big Smoke collision (can't run over with car)
+                if (map.getCell(newPos.x, newPos.y) == Map::CellType::BIG_SMOKE && player.IsInCar())
                 {
-                    player.SetCurrentZone(Zone::LOS_SANTOS);
+                    canMove = false; // Can't run over Big Smoke
                 }
-                else if (newPos.x < 2 * totalWidth / 3)
+                // Check for NPC collision when in car
+                else if (map.getCell(newPos.x, newPos.y) == Map::CellType::NPC && player.IsInCar())
                 {
-                    player.SetCurrentZone(Zone::SAN_FIERRO);
+                    map.RunOverNPC(newPos.x, newPos.y, player);
+                    canMove = true;
                 }
-                else
+                // Check for car collision when not in car
+                else if (map.getCell(newPos.x, newPos.y) == Map::CellType::CAR && !player.IsInCar())
                 {
-                    player.SetCurrentZone(Zone::LAS_VENTURAS);
+                    canMove = false; // Can't walk through cars
                 }
 
-                // Handle money pickup (only if not in car)
-                if (map.getCell(newPos.x, newPos.y) == Map::CellType::MONEY && !player.IsInCar())
+                if (canMove)
                 {
-                    Zone zone = player.GetCurrentZone();
-                    int maxAmount = 0;
+                    player.SetPos(newPos.x, newPos.y);
 
-                    switch (zone)
+                    // Update zone based on position
+                    int totalWidth = map.GetTotalWidth();
+                    if (newPos.x < totalWidth / 3)
                     {
-                    case Zone::LOS_SANTOS:
-                        maxAmount = map.moneyBeatingNPCs_LosSantos;
-                        break;
-                    case Zone::SAN_FIERRO:
-                        maxAmount = map.moneyBeatingNPCs_SanFierro;
-                        break;
-                    case Zone::LAS_VENTURAS:
-                        maxAmount = map.moneyBeatingNPCs_LasVenturas;
-                        break;
+                        player.SetCurrentZone(Zone::LOS_SANTOS);
                     }
-
-                    if (maxAmount > 0)
+                    else if (newPos.x < 2 * totalWidth / 3)
                     {
-                        int randomAmount = 1 + rand() % maxAmount;
-                        player.AddMoney(randomAmount);
+                        player.SetCurrentZone(Zone::SAN_FIERRO);
                     }
                     else
                     {
-                        player.AddMoney(1);
+                        player.SetCurrentZone(Zone::LAS_VENTURAS);
                     }
 
-                    map.setCell(newPos.x, newPos.y, Map::CellType::EMPTY);
-                }
-
-                // Handle toll crossing
-                if (map.getCell(newPos.x, newPos.y) == Map::CellType::TOLL)
-                {
-                    if (!map.HandleTollCrossing(player))
+                    // Handle money pickup (only if not in car)
+                    if (map.getCell(newPos.x, newPos.y) == Map::CellType::MONEY && !player.IsInCar())
                     {
-                        // Player arrested - trigger game over
-                        // This should be handled by the Game class
+                        Zone zone = player.GetCurrentZone();
+                        int maxAmount = 0;
+
+                        switch (zone)
+                        {
+                        case Zone::LOS_SANTOS:
+                            maxAmount = map.moneyBeatingNPCs_LosSantos;
+                            break;
+                        case Zone::SAN_FIERRO:
+                            maxAmount = map.moneyBeatingNPCs_SanFierro;
+                            break;
+                        case Zone::LAS_VENTURAS:
+                            maxAmount = map.moneyBeatingNPCs_LasVenturas;
+                            break;
+                        }
+
+                        if (maxAmount > 0)
+                        {
+                            int randomAmount = 1 + rand() % maxAmount;
+                            player.AddMoney(randomAmount);
+                        }
+                        else
+                        {
+                            player.AddMoney(1);
+                        }
+
+                        map.setCell(newPos.x, newPos.y, Map::CellType::EMPTY);
+                    }
+
+                    // Handle toll crossing
+                    if (map.getCell(newPos.x, newPos.y) == Map::CellType::TOLL)
+                    {
+                        if (!map.HandleTollCrossing(player))
+                        {
+                            // Player arrested - trigger game over
+                            // This should be handled by the Game class
+                        }
                     }
                 }
             }
+            map.Draw(player);
         }
-
-        map.Draw(player);
+    }
+    else
+    {
+        map.GameOver(player);
     }
 }

@@ -115,4 +115,7 @@ public:
 
 	// Toll system updates
 	bool HandleTollCrossing(Player& player);
+
+	// Game Over
+	void GameOver(const Player& player) const;
 };
