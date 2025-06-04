@@ -113,8 +113,10 @@ void Game::PlayGame()
         ChangeState(GameState::GAME_OVER, GameOverReason::BIG_SMOKE_KILLED);
         return;
     }
+    bool tollResult = gameMap.HandleTollCrossing(player);
+    // std::cout << "HandleTollCrossing returned: " << tollResult << std::endl;
 
-    if (!gameMap.HandleTollCrossing(player))
+    if (!tollResult)
     {
         ChangeState(GameState::GAME_OVER, GameOverReason::ARRESTED_AT_TOLL);
         return;

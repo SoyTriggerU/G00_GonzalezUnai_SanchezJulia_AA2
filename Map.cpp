@@ -121,7 +121,7 @@ void Map::InitMap()
             }
             else if (x == totalWidth / 3 || x == 2 * totalWidth / 3)
             {
-                if (y == randomY)
+                if (y == 20)
                     map[y][x] = CellType::TOLL;
                 else
                     map[y][x] = CellType::WALL;
@@ -615,12 +615,12 @@ bool Map::HandleTollCrossing(Player& player)
     {
         tollFee = tax_LosSantos_SanFierro;
         nextZone = Zone::SAN_FIERRO;
-
         if (player.GetMoney() >= tollFee)
         {
             player.SubstractMoney(tollFee);
             player.SetCurrentZone(nextZone);
-            map[pos.y][pos.x] = CellType::EMPTY;
+            setCell(pos.x, pos.y, CellType::EMPTY);
+            //map[pos.y][pos.x] = CellType::EMPTY;
             return true;
         }
         else return false;
@@ -634,7 +634,8 @@ bool Map::HandleTollCrossing(Player& player)
         {
             player.SubstractMoney(tollFee);
             player.SetCurrentZone(nextZone);
-            map[pos.y][pos.x] = CellType::EMPTY;
+            setCell(pos.x, pos.y, CellType::EMPTY);
+            //map[pos.y][pos.x] = CellType::EMPTY;
             return true;
         }
         else return false;

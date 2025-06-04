@@ -259,11 +259,11 @@ void HandleInput(Player& player, Map& map)
 
                     // Update zone based on position
                     int totalWidth = map.GetTotalWidth();
-                    if (newPos.x < totalWidth / 3)
+                    if (newPos.x < ((totalWidth / 3) + 1))
                     {
                         player.SetCurrentZone(Zone::LOS_SANTOS);
                     }
-                    else if (newPos.x < 2 * totalWidth / 3)
+                    else if (newPos.x < ((2 * totalWidth / 3) + 1))
                     {
                         player.SetCurrentZone(Zone::SAN_FIERRO);
                     }
@@ -304,15 +304,15 @@ void HandleInput(Player& player, Map& map)
                         map.setCell(newPos.x, newPos.y, Map::CellType::EMPTY);
                     }
 
-                    // Handle toll crossing
-                    if (map.getCell(newPos.x, newPos.y) == Map::CellType::TOLL)
-                    {
-                        if (!map.HandleTollCrossing(player))
-                        {
-                            // Player arrested - trigger game over
-                            // This should be handled by the Game class
-                        }
-                    }
+                    //// Handle toll crossing
+                    //if (map.getCell(newPos.x, newPos.y) == Map::CellType::TOLL)
+                    //{
+                    //    if (!map.HandleTollCrossing(player))
+                    //    {
+                    //        // Player arrested - trigger game over
+                    //        // This should be handled by the Game class
+                    //    }
+                    //}
                 }
             }
             map.Draw(player);
