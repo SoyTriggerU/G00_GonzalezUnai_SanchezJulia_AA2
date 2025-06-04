@@ -39,14 +39,16 @@ void Game::ShowInitScreen()
 {
     Map::ClearScreen();
     std::cout << "\n\n\n";
-    std::cout << "  ╔═════════════════════════════════════╗\n";
-    std::cout << "  ║                                     ║\n";
-    std::cout << "  ║        GTA SAN ANDREAS MINI         ║\n";
-    std::cout << "  ║                                     ║\n";
-    std::cout << "  ║           Welcome to CJ's           ║\n";
-    std::cout << "  ║              Adventure              ║\n";
-    std::cout << "  ║                                     ║\n";
-    std::cout << "  ╚═════════════════════════════════════╝\n";
+    std::cout << "   -------------------------------------\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "  |        GTA SAN ANDREAS MINI         |\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "  |           Welcome to CJ's           |\n";
+    std::cout << "  |              Adventure              |\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "   -------------------------------------\n";
 
     if (HasTimeElapsed(3))
     {
@@ -59,30 +61,33 @@ void Game::ShowMainMenu()
 {
     Map::ClearScreen();
     std::cout << "\n\n";
-    std::cout << "  ╔═════════════════════════════════════╗\n";
-    std::cout << "  ║            MAIN MENU                ║\n";
-    std::cout << "  ║                                     ║\n";
+    std::cout << "   -------------------------------------\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "  |            MAIN MENU                |\n";
+    std::cout << "  |                                     |\n";
 
     // Display menu options with selection indicator
     if (selectedMenuOption == 0) {
-        std::cout << "  ║  > Play Game                     <  ║\n";
-        std::cout << "  ║    Exit                             ║\n";
+        std::cout << "  |  > Play Game                     <  |\n";
+        std::cout << "  |    Exit                             |\n";
     }
     else {
-        std::cout << "  ║    Play Game                        ║\n";
-        std::cout << "  ║  > Exit                          <  ║\n";
+        std::cout << "  |    Play Game                        |\n";
+        std::cout << "  |  > Exit                          <  |\n";
     }
 
-    std::cout << "  ║                                     ║\n";
-    std::cout << "  ║  Use UP/DOWN arrow keys to navigate ║\n";
-    std::cout << "  ║  SPACE to select option             ║\n";
-    std::cout << "  ║                                     ║\n";
-    std::cout << "  ║  In Game Controls:                  ║\n";
-    std::cout << "  ║  Arrow keys to move                 ║\n";
-    std::cout << "  ║  SPACE to attack/interact           ║\n";
-    std::cout << "  ║  E to enter/exit car                ║\n";
-    std::cout << "  ║                                     ║\n";
-    std::cout << "  ╚═════════════════════════════════════╝\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "  |  Use UP/DOWN arrow keys to navigate |\n";
+    std::cout << "  |  SPACE to select option             |\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "  |  In Game Controls:                  |\n";
+    std::cout << "  |  Arrow keys to move                 |\n";
+    std::cout << "  |  SPACE to attack/interact           |\n";
+    std::cout << "  |  E to enter/exit car                |\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "  |                                     |\n";
+    std::cout << "   -------------------------------------\n";
+
 
     HandleMenuInput();
     Sleep(100);
@@ -109,6 +114,12 @@ void Game::PlayGame()
         return;
     }
 
+    if (!gameMap.HandleTollCrossing(player))
+    {
+        ChangeState(GameState::GAME_OVER, GameOverReason::ARRESTED_AT_TOLL);
+        return;
+    }
+
     Sleep(150);
 }
 
@@ -116,29 +127,32 @@ void Game::ShowGameOver()
 {
     system("cls");
     std::cout << "\n\n\n";
-    std::cout << "  ╔══════════════════════════════════════╗\n";
-    std::cout << "  ║             GAME OVER                ║\n";
-    std::cout << "  ║                                      ║\n";
+    std::cout << "   --------------------------------------\n";
+    std::cout << "  |                                      |\n";
+    std::cout << "  |             GAME OVER                |\n";
+    std::cout << "  |                                      |\n";
 
     switch (gameOverReason)
     {
     case GameOverReason::PLAYER_DIED:
-        std::cout << "  ║     CJ died! Respawning...           ║\n";
-        std::cout << "  ║   All progress lost!                 ║\n";
+        std::cout << "  |     CJ died! Respawning...           |\n";
+        std::cout << "  |     All progress lost!               |\n";
         break;
     case GameOverReason::BIG_SMOKE_KILLED:
-        std::cout << "  ║   Congratulations!                   ║\n";
-        std::cout << "  ║   Big Smoke has been defeated!       ║\n";
-        std::cout << "  ║   You completed the game!            ║\n";
+        std::cout << "  |   Congratulations!                   |\n";
+        std::cout << "  |   Big Smoke has been defeated!       |\n";
+        std::cout << "  |   You completed the game!            |\n";
         break;
     case GameOverReason::ARRESTED_AT_TOLL:
-        std::cout << "  ║   CJ was arrested at the toll!       ║\n";
-        std::cout << "  ║   Game Over!                         ║\n";
+        std::cout << "  |   CJ was arrested at the toll!       |\n";
+        std::cout << "  |   Game Over!                         |\n";
         break;
     }
 
-    std::cout << "  ║                                      ║\n";
-    std::cout << "  ╚══════════════════════════════════════╝\n";
+    std::cout << "  |                                      |\n";
+    std::cout << "  |                                      |\n";
+    std::cout << "   --------------------------------------\n";
+
 
     if (HasTimeElapsed(5))
     {

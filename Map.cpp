@@ -607,23 +607,14 @@ bool Map::IsPlayerAdjacentToBigSmoke(const Player& player)
 bool Map::HandleTollCrossing(Player& player)
 {
     Position2D pos = player.GetPos();
+    Zone currentZone = player.GetCurrentZone();
+    int tollFee = 0;
+    Zone nextZone = currentZone;
 
-    if (map[pos.y][pos.x] == CellType::TOLL)
+    if (map[pos.y][pos.x] == CellType::TOLL && currentZone == Zone::LOS_SANTOS)
     {
-        Zone currentZone = player.GetCurrentZone();
-        int tollFee = 0;
-        Zone nextZone = currentZone;
-
-        if (currentZone == Zone::LOS_SANTOS)
-        {
-            tollFee = tax_LosSantos_SanFierro;
-            nextZone = Zone::SAN_FIERRO;
-        }
-        else if (currentZone == Zone::SAN_FIERRO)
-        {
-            tollFee = tax_SanFierro_LasVenturas;
-            nextZone = Zone::LAS_VENTURAS;
-        }
+        tollFee = tax_LosSantos_SanFierro;
+        nextZone = Zone::SAN_FIERRO;
 
         if (player.GetMoney() >= tollFee)
         {
@@ -632,17 +623,27 @@ bool Map::HandleTollCrossing(Player& player)
             map[pos.y][pos.x] = CellType::EMPTY;
             return true;
         }
-        else
+        else return false;
+    }
+    else if (map[pos.y][pos.x] == CellType::TOLL && currentZone == Zone::SAN_FIERRO)
+    {
+        tollFee = tax_SanFierro_LasVenturas;
+        nextZone = Zone::LAS_VENTURAS;
+
+        if (player.GetMoney() >= tollFee)
         {
-            // Player arrested - Game Over
-            return false;
+            player.SubstractMoney(tollFee);
+            player.SetCurrentZone(nextZone);
+            map[pos.y][pos.x] = CellType::EMPTY;
+            return true;
         }
+        else return false;
     }
     return true;
 }
-
 void Map::Draw(const Player& player)
 {
+    system("cls");
     HideCursor();
     ClearScreen();
 
