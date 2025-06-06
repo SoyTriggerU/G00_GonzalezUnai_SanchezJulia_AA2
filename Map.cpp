@@ -121,7 +121,7 @@ void Map::InitMap()
             }
             else if (x == totalWidth / 3 || x == 2 * totalWidth / 3)
             {
-                if (y == 20)
+                if (y == randomY)
                     map[y][x] = CellType::TOLL;
                 else
                     map[y][x] = CellType::WALL;
